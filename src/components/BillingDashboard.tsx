@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Search, 
-  Filter, 
   Eye, 
   Send, 
   Download, 
   Edit, 
-  Trash2, 
-  MoreVertical, 
+  Trash2,  
   FileText, 
   Clock, 
   CheckCircle, 
@@ -67,7 +65,7 @@ const BillingDashboard = () => {
         amount: parseFloat(inv.total_ttc || 0).toFixed(2),
         status: mapStatus(inv.status || 'draft'),
         dueDate: inv.due_date || '',
-        createdDate: inv.created_at || new Date().toISOString().split('T')[0],
+        createdDate: inv.created_at || new Date().ten_retardoISOString().split('T')[0],
         type: inv.type === 'facture' ? 'invoice' : inv.type === 'devise' ? 'quote' : 'invoice'
       })) : [];
       setInvoices(mappedInvoices);
@@ -131,7 +129,10 @@ const BillingDashboard = () => {
   const totalAmount = invoices.reduce((sum, invoice) => sum + parseFloat(invoice.amount), 0).toFixed(2);
   const paidAmount = invoices.filter(inv => inv.status === 'paid').reduce((sum, invoice) => sum + parseFloat(invoice.amount), 0).toFixed(2);
   const pendingAmount = invoices.filter(inv => inv.status === 'sent').reduce((sum, invoice) => sum + parseFloat(invoice.amount), 0).toFixed(2);
-  const overdueAmount = invoices.filter(inv => inv.status === 'overdue').reduce((sum, invoice) => sum + parseFloat(invoice.amount), 0).toFixed(2);
+  const overdueAmount = invoices.filter(inv => inv.status === 'overdue').reduce((sum, invoice) => sum + parseFloat(invoice.amount), 0).toFixed(2); // en retard
+
+  console.log(overdueAmount);
+  
 
   const handleCreateInvoice = async (invoiceData: any) => {
     try {
@@ -205,7 +206,7 @@ const BillingDashboard = () => {
   }
 
   if (loading) {
-    return <div className="p-6 text-center">Chargement...</div>;
+    return <div className="p-6 text-center">Chargement...</div>;overdueAmount
   }
 
   if (error) {
