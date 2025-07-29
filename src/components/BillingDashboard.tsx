@@ -42,11 +42,53 @@ const BillingDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchInvoices();
-  }, []);
+  // Static data to use instead of API
+  const staticInvoices: Invoice[] = [
+    {
+      id: '1',
+      user_id: 'user1',
+      contract_id: 'contract1',
+      number: '2025-001',
+      client: 'Client A',
+      amount: 500.00,
+      status: 'draft',
+      dueDate: '2025-08-01',
+      createdDate: '2025-07-15',
+      type: 'invoice',
+    },
+    {
+      id: '2',
+      user_id: 'user2',
+      contract_id: 'contract2',
+      number: '2025-002',
+      client: 'Client B',
+      amount: 750.50,
+      status: 'sent',
+      dueDate: '2025-07-31',
+      createdDate: '2025-07-10',
+      type: 'quote',
+    },
+    {
+      id: '3',
+      user_id: 'user3',
+      contract_id: 'contract3',
+      number: '2025-003',
+      client: 'Client C',
+      amount: 300.75,
+      status: 'paid',
+      dueDate: '2025-07-20',
+      createdDate: '2025-07-01',
+      type: 'invoice',
+    },
+  ];
 
-  const fetchInvoices = async () => {
+  // Commented out dynamic fetch effect
+  /* useEffect(() => {
+    fetchInvoices();
+  }, []); */
+
+  // Commented out dynamic fetch function
+  /* const fetchInvoices = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -65,8 +107,8 @@ const BillingDashboard = () => {
         amount: parseFloat(inv.total_ttc || 0).toFixed(2),
         status: mapStatus(inv.status || 'draft'),
         dueDate: inv.due_date || '',
-        createdDate: inv.created_at || new Date().ten_retardoISOString().split('T')[0],
-        type: inv.type === 'facture' ? 'invoice' : inv.type === 'devise' ? 'quote' : 'invoice'
+        createdDate: inv.created_at || new Date().toISOString().split('T')[0],
+        type: inv.type === 'facture' ? 'invoice' : inv.type === 'devise' ? 'quote' : 'invoice',
       })) : [];
       setInvoices(mappedInvoices);
     } catch (error: any) {
@@ -75,7 +117,7 @@ const BillingDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }; */
 
   const mapStatus = (status: string) => {
     const statusMap: { [key: string]: Invoice['status'] } = {
@@ -83,7 +125,7 @@ const BillingDashboard = () => {
       'payée': 'paid',
       'en_retard': 'overdue',
       'annulée': 'cancelled',
-      'draft': 'draft'
+      'draft': 'draft',
     };
     return statusMap[status.toLowerCase()] || 'draft';
   };
@@ -131,10 +173,8 @@ const BillingDashboard = () => {
   const pendingAmount = invoices.filter(inv => inv.status === 'sent').reduce((sum, invoice) => sum + parseFloat(invoice.amount), 0).toFixed(2);
   const overdueAmount = invoices.filter(inv => inv.status === 'overdue').reduce((sum, invoice) => sum + parseFloat(invoice.amount), 0).toFixed(2); // en retard
 
-  console.log(overdueAmount);
-  
-
-  const handleCreateInvoice = async (invoiceData: any) => {
+  // Commented out dynamic create invoice function
+  /* const handleCreateInvoice = async (invoiceData: any) => {
     try {
       const response = await fetch('http://localhost:3000/api/invoices', {
         method: 'POST',
@@ -149,8 +189,8 @@ const BillingDashboard = () => {
           due_date: invoiceData.dueDate,
           encaissé: 0.00,
           en_attente: parseFloat(invoiceData.amount).toFixed(2),
-          en_retard: 0.00
-        })
+          en_retard: 0.00,
+        }),
       });
       if (response.ok) fetchInvoices();
     } catch (error) {
@@ -158,60 +198,70 @@ const BillingDashboard = () => {
     } finally {
       setShowCreateModal(false);
     }
-  };
+  }; */
 
+  // Commented out dynamic view details function (can be kept static for now)
   const handleViewDetails = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setShowDetailsModal(true);
   };
 
-  const handleDeleteInvoice = async (invoiceId: string) => {
+  // Commented out dynamic delete invoice function
+  /* const handleDeleteInvoice = async (invoiceId: string) => {
     try {
       const response = await fetch(`http://localhost:3000/api/invoices/${invoiceId}`, { method: 'DELETE' });
       if (response.ok) fetchInvoices();
     } catch (error) {
       console.error('Error deleting invoice:', error);
     }
-  };
+  }; */
 
-  const handleStatusChange = async (invoiceId: string, newStatus: Invoice['status']) => {
+  // Commented out dynamic status change function
+  /* const handleStatusChange = async (invoiceId: string, newStatus: Invoice['status']) => {
     try {
       const response = await fetch(`http://localhost:3000/api/invoices/${invoiceId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           status: mapStatusInverse(newStatus),
-          total_ttc: parseFloat(invoices.find(inv => inv.id === invoiceId)?.amount || 0).toFixed(2)
-        })
+          total_ttc: parseFloat(invoices.find(inv => inv.id === invoiceId)?.amount || 0).toFixed(2),
+        }),
       });
       if (response.ok) fetchInvoices();
     } catch (error) {
       console.error('Error updating status:', error);
     }
-  };
+  }; */
 
-  const mapStatusInverse = (status: Invoice['status']) => {
+  // Commented out dynamic status inverse mapping (not needed without API)
+  /* const mapStatusInverse = (status: Invoice['status']) => {
     const statusMap: { [key: string]: string } = {
       'sent': 'en_attente',
       'paid': 'payée',
       'overdue': 'en_retard',
       'cancelled': 'annulée',
-      'draft': 'draft'
+      'draft': 'draft',
     };
     return statusMap[status] || 'draft';
-  };
+  }; */
+
+  // Set static invoices immediately to avoid loading state
+  useEffect(() => {
+    setInvoices(staticInvoices);
+    setLoading(false);
+  }, []);
 
   if (showCreatePage) {
     return <CreateInvoicePage onBack={() => setShowCreatePage(false)} />;
   }
 
-  if (loading) {
-    return <div className="p-6 text-center">Chargement...</div>;overdueAmount
+  /* if (loading) {
+    return <div className="p-6 text-center">Chargement...</div>;
   }
 
   if (error) {
     return <div className="p-6 text-center text-red-600">Erreur : {error}</div>;
-  }
+  } */
 
   return (
     <div className="p-6 bg-[#F8F8F8] min-h-screen">
@@ -375,7 +425,7 @@ const BillingDashboard = () => {
                           <Edit className="w-4 h-4 text-gray-600" />
                         </button>
                         <button
-                          onClick={() => handleDeleteInvoice(invoice.id)}
+                          /* onClick={() => handleDeleteInvoice(invoice.id)} */
                           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                           title="Supprimer"
                         >
@@ -400,7 +450,8 @@ const BillingDashboard = () => {
       {showCreateModal && (
         <CreateInvoiceModal
           onClose={() => setShowCreateModal(false)}
-          onSubmit={handleCreateInvoice}
+          /* onSubmit={handleCreateInvoice} */
+          onSubmit={() => setShowCreateModal(false)} // Placeholder static action
         />
       )}
 
@@ -408,7 +459,8 @@ const BillingDashboard = () => {
         <InvoiceDetailsModal
           invoice={selectedInvoice}
           onClose={() => setShowDetailsModal(false)}
-          onStatusChange={handleStatusChange}
+          /* onStatusChange={handleStatusChange} */
+          onStatusChange={() => {}} // Placeholder static action
         />
       )}
     </div>
